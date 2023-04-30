@@ -1,6 +1,7 @@
 from django.db import models
+from django.conf import settings
 
-from apps.account.models import Profile
+# from apps.account.models import Profile
 from apps.main.models import Category, Tag
 from ckeditor.fields import RichTextField
 
@@ -18,7 +19,7 @@ def image_path(instance, filename):
 
 
 def file_path(instance, filename):
-    return f"courses/{instance.lesson.course.title}/{instance.lesson.title}/{filename}"
+    return f"courses/{instance}/{filename}"
 
 
 class Course(Timestamp):
@@ -27,7 +28,8 @@ class Course(Timestamp):
         (1, 'Intermediate'),
         (2, 'Advanced'),
     )
-    author = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, limit_choices_to={"role":1})
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True,
+                               limit_choices_to={"role": 1})
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     title = models.CharField(max_length=221)
     body = RichTextField()
@@ -56,7 +58,7 @@ class LessonFiles(Timestamp):
 
 
 class SoldCourse(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, limit_choices_to={"role": 0})
+    profile = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, limit_choices_to={"role": 0})
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     created_date = models.DateTimeField(auto_now_add=True)
     is_free = models.BooleanField(default=False)

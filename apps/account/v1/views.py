@@ -3,7 +3,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from .forms import SignUpForm
-from ..models import Profile
+# from ..models import Profile
+from django.conf import settings
 from apps.course.models import SoldCourse
 
 
@@ -33,7 +34,7 @@ class Register(CreateView):
 
 def profile_info(request):
     user_id = request.user.id
-    profile = Profile.objects.get(user_id=user_id)
+    profile = settings.AUTH_USER_MODEL.objects.get(user_id=user_id)
     ctx = {
         'profile': profile,
     }
@@ -42,7 +43,7 @@ def profile_info(request):
 
 def profile_update(request, pk):
     user = request.user
-    profile = Profile.objects.get(user=user)
+    profile = settings.AUTH_USER_MODEL.objects.get(user=user)
     if request.method == 'POST':
         email = request.POST.get('email', None)
         first_name = request.POST.get('first_name', None)

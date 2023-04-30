@@ -40,7 +40,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # third part apps
+    'drf_yasg',
+    'rest_framework',
     'ckeditor',
+
+    # api apps
+    'apps.account.api_account',
+    'apps.blog.api_blog',
+    'apps.course.api_course',
+    'apps.main.api_main',
 
     # local apps
     'apps.account',
@@ -48,6 +56,14 @@ INSTALLED_APPS = [
     'apps.course',
     'apps.main',
 ]
+
+AUTH_USER_MODEL = 'account.Account'
+
+LOGIN_REDIRECT_URL = '/'
+
+LOCAL_BASE_URL = 'http://127.0.0.1:8000'
+PROD_BASE_URL = 'https://edu.uz'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -150,3 +166,33 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
+
+if DEBUG:
+    auth_list = [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+else:
+    auth_list = [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      'Basic': {
+            'type': 'basic'
+      },
+      'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': auth_list,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 2,
+}

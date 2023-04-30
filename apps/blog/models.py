@@ -1,7 +1,8 @@
+from django.conf import settings
 from django.db import models
 from apps.main.models import Category, Tag
 from ckeditor.fields import RichTextField
-from apps.account.models import Profile
+# from apps.account.models import Profile
 from django.db.models.signals import post_save
 
 
@@ -10,11 +11,11 @@ def file_path(instance, filename):
 
 
 class Post(models.Model):
-    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=221)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     image = models.ImageField() # upload_to=file_path)
-    tag = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag)
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
 
@@ -23,7 +24,7 @@ class Post(models.Model):
 
 
 class Body(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_body')
     body = RichTextField()
     is_script = models.BooleanField(default=False)
 
@@ -32,7 +33,7 @@ class Body(models.Model):
 
 
 class Comment(models.Model):
-    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     parent_comment = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     body = models.TextField()

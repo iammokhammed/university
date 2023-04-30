@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
+
+from django.conf import settings
 from .forms import ContactForm, SubscribeForm
 from apps.main.models import Contact, FAQ, Answer, Category, Tag
 
 from apps.course.models import Course, Lesson
-from ...account.models import Profile
+# from ...account.models import Profile
 from ...blog.models import Post
 
 
@@ -34,7 +36,7 @@ def footer(request):
 def index(request):
     courses = Course.objects.order_by('-id')
     categories = Category.objects.all()
-    users = Profile.objects.all()
+    users = settings.AUTH_USER_MODEL.objects.all()
     recent_blog = Post.objects.order_by('-id')[1]
     blogs = Post.objects.all()
     cat = request.GET.get('cat')

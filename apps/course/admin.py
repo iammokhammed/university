@@ -2,14 +2,14 @@ from django.contrib import admin
 from .models import Lesson, LessonFiles, Course, SoldCourse
 
 
-class LessonFilesinline(admin.TabularInline):
+class LessonFilesInline(admin.TabularInline):
     model = LessonFiles
     extra = 1
 
 
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
-    inlines = (LessonFilesinline, )
+    inlines = (LessonFilesInline, )
     list_display = ['id', 'title', 'course']
 
 
